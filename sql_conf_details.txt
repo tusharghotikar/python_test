@@ -1,0 +1,1 @@
+{"username": "test_user","password": "test", "host": "192.168.56.1", "sid": "AdventureWorks2019","export_details":{"silent_mode": "N","split_threshold":100, "split_partitions":4, "table_list":["REGIONS","COUNTRIES","Locations","Departments","Jobs","employees","test_data","exp_list"]}}

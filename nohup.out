@@ -1,0 +1,68 @@
+
+Export: Release 19.0.0.0.0 - Production on Mon Aug 31 06:34:28 2020
+Version 19.3.0.0.0
+
+Copyright (c) 1982, 2019, Oracle and/or its affiliates.  All rights reserved.
+
+Connected to: Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+Starting "HR"."SYS_EXPORT_SCHEMA_01":  hr/********@orcl schemas=HR directory=test_abc dumpfile=083120200634280.dmp logfile=083120200634280.dmp.log 
+Processing object type SCHEMA_EXPORT/TABLE/TABLE_DATA
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/STATISTICS/INDEX_STATISTICS
+Processing object type SCHEMA_EXPORT/TABLE/STATISTICS/TABLE_STATISTICS
+Processing object type SCHEMA_EXPORT/STATISTICS/MARKER
+Processing object type SCHEMA_EXPORT/USER
+Processing object type SCHEMA_EXPORT/SYSTEM_GRANT
+Processing object type SCHEMA_EXPORT/ROLE_GRANT
+Processing object type SCHEMA_EXPORT/DEFAULT_ROLE
+Processing object type SCHEMA_EXPORT/TABLESPACE_QUOTA
+Processing object type SCHEMA_EXPORT/PRE_SCHEMA/PROCACT_SCHEMA
+Processing object type SCHEMA_EXPORT/SEQUENCE/SEQUENCE
+Processing object type SCHEMA_EXPORT/TABLE/TABLE
+Processing object type SCHEMA_EXPORT/TABLE/COMMENT
+Processing object type SCHEMA_EXPORT/PROCEDURE/PROCEDURE
+Processing object type SCHEMA_EXPORT/PROCEDURE/ALTER_PROCEDURE
+Processing object type SCHEMA_EXPORT/VIEW/VIEW
+Processing object type SCHEMA_EXPORT/TABLE/INDEX/INDEX
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/CONSTRAINT
+Processing object type SCHEMA_EXPORT/TABLE/CONSTRAINT/REF_CONSTRAINT
+Processing object type SCHEMA_EXPORT/TABLE/TRIGGER
+. . exported "HR"."test-1018649179"                      54.16 KB       6 rows
+. . exported "HR"."test-409577834"                       54.16 KB       6 rows
+. . exported "HR"."test1985546705"                       54.16 KB       6 rows
+. . exported "HR"."test784740247"                        54.16 KB       6 rows
+. . exported "HR"."test-1022767244"                      53.97 KB       5 rows
+. . exported "HR"."test-1288085800"                      53.97 KB       5 rows
+. . exported "HR"."test-1431074305"                      53.97 KB       5 rows
+. . exported "HR"."test-1581072984"                      53.97 KB       5 rows
+. . exported "HR"."test-262281245"                       53.97 KB       5 rows
+. . exported "HR"."test-352048927"                       53.97 KB       5 rows
+. . exported "HR"."test969978775"                        53.97 KB       5 rows
+. . exported "HR"."test15441391"                         53.96 KB       5 rows
+. . exported "HR"."EMPLOYEES"                            17.07 KB     107 rows
+. . exported "HR"."LOCATIONS"                            8.437 KB      23 rows
+. . exported "HR"."JOB_HISTORY"                          7.195 KB      10 rows
+. . exported "HR"."JOBS"                                 7.101 KB      19 rows
+. . exported "HR"."DEPARTMENTS"                          7.125 KB      27 rows
+. . exported "HR"."COUNTRIES"                            6.367 KB      25 rows
+. . exported "HR"."REGIONS"                              5.546 KB       4 rows
+. . exported "HR"."job_test1"                            53.96 KB       5 rows
+. . exported "HR"."job_test2"                            53.96 KB       5 rows
+. . exported "HR"."job_test3"                            53.96 KB       5 rows
+. . exported "HR"."job_test4"                            53.96 KB       5 rows
+. . exported "HR"."test-133179831"                       53.97 KB       5 rows
+. . exported "HR"."test-1987925211"                      53.97 KB       5 rows
+. . exported "HR"."test-263824401"                       53.97 KB       5 rows
+. . exported "HR"."test146780797"                        53.97 KB       5 rows
+. . exported "HR"."test1577599448"                       53.97 KB       5 rows
+. . exported "HR"."test1762546566"                       53.97 KB       5 rows
+. . exported "HR"."test1933189384"                       53.97 KB       5 rows
+. . exported "HR"."test2010270657"                       53.97 KB       5 rows
+. . exported "HR"."test2079636306"                       54.16 KB       6 rows
+. . exported "HR"."test268636335"                        54.16 KB       6 rows
+. . exported "HR"."test575495040"                        53.97 KB       5 rows
+Master table "HR"."SYS_EXPORT_SCHEMA_01" successfully loaded/unloaded
+******************************************************************************
+Dump file set for HR.SYS_EXPORT_SCHEMA_01 is:
+  /u01/userhome/oracle/Downloads/python_test/083120200634280.dmp
+Job "HR"."SYS_EXPORT_SCHEMA_01" successfully completed at Mon Aug 31 06:36:41 2020 elapsed 0 00:02:11
+
