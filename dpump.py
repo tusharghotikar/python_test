@@ -57,8 +57,8 @@ def exp_data(connection,sname,seq_no,full_exp):
  #print(" Job id is ",job_id)
  job_id = cursor1.var(int)
  cursor1.callproc('create_job', [job_name,job_id])
- dump_file_name = "exp_"+schema_name+"_"+job_name+seq_no+".dmp"
- log_file_name = "exp_"+schema_name+"_"+job_name+seq_no+".log"
+ dump_file_name = "exp_"+schema_name.replace("$","")+"_"+job_name+seq_no+".dmp"
+ log_file_name = "exp_"+schema_name.replace("$","")+"_"+job_name+seq_no+".log"
 
  #print("job id is ",job_id.getvalue())   
  
@@ -98,8 +98,10 @@ def get_oracle_list(connection,table_list):
  bindValues = table_list
  bindValues = [val.upper() for val in bindValues]
  bindNames = [":" + str(i + 1) for i in range(len(bindValues))]
- sql = "select rownum,username from dba_users"
- cursor.execute(sql)
+ sql = "select rownum,username from dba_users " + \
+ "where username in (%s)" % (",".join(bindNames))
+
+ cursor.execute(sql, bindValues)
 
  Data = np.array(list(cursor.fetchall()))
  cursor.close()
@@ -107,8 +109,8 @@ def get_oracle_list(connection,table_list):
 
 
 def main():
- conf_details_dict = read_config('conf_details.txt')
- table_list = conf_details_dict['export_details']['table_list']
+ conf_details_dict = read_config('conf_user_details.txt')
+ user_list = conf_details_dict['export_details']['user_list']
  
  split_threshold = conf_details_dict['export_details']['split_threshold']
  split_partition = conf_details_dict['export_details']['split_partitions']
@@ -123,7 +125,7 @@ def main():
  
  connection = cx_Oracle.connect(username,password, servername+":"+str(port_no)+"/"+dbname)
 
- Data = get_oracle_list(connection,table_list) 
+ Data = get_oracle_list(connection,user_list) 
 
 
  print_table(Data,split_partition,username,servername,dbname,silent_mode,split_threshold)
