@@ -1,0 +1,15 @@
+{
+   "username": "hr",
+   "password": "hr",
+   "host": "localhost",
+   "sid": "orcl",
+   "port": 1521,
+   "export_details": {
+      "silent_mode": "Y",
+      "split_threshold": 100,
+      "split_partitions": 4,
+      "user_list": [
+         "HR","SH","SCOTT"
+      ]
+   }
+}
