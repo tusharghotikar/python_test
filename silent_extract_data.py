@@ -8,6 +8,12 @@ import os
 import json
 import time
 
+def OutputTypeHandler(cursor, name, defaultType, size, precision, scale):
+    if defaultType == cx_Oracle.DB_TYPE_CLOB:
+        return cursor.var(cx_Oracle.DB_TYPE_LONG, arraysize=cursor.arraysize)
+    if defaultType == cx_Oracle.DB_TYPE_BLOB:
+        return cursor.var(cx_Oracle.DB_TYPE_LONG_RAW, arraysize=cursor.arraysize)
+
 def read_config(config_file_name):
  with open(config_file_name) as f:
   conf_details_dict = json.load(f)
@@ -160,6 +166,7 @@ def main():
  port_no = conf_details_dict['port']
  
  connection = cx_Oracle.connect(username,password, servername+":"+str(port_no)+"/"+dbname)
+ connection.outputtypehandler = OutputTypeHandler
 
  Data = get_oracle_list(connection,table_list) 
 

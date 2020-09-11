@@ -16,7 +16,8 @@
          "Jobs",
          "employees",
          "test_data",
-         "exp_list"
+         "exp_list",
+         "lob_tbl"
       ]
    }
 }

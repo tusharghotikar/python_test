@@ -44,10 +44,10 @@ def zip_file(file_name):
  os.remove(file_name)
 
 
-def exp_data(connection,sname,seq_no,full_exp):
+def exp_data(connection,sname,seq_no,full_exp,split_threshold):
  job_name = datetime.now().strftime("%m%d%Y%H%M%S")
  schema_name = sname 
- file_name = schema_name.lower()+str(seq_no)+".csv"
+
  #print ("Exporting data for ",schema_name.lower())
 
  cursor1 = connection.cursor()
@@ -57,12 +57,12 @@ def exp_data(connection,sname,seq_no,full_exp):
  #print(" Job id is ",job_id)
  job_id = cursor1.var(int)
  cursor1.callproc('create_job', [job_name,job_id])
- dump_file_name = "exp_"+schema_name.replace("$","")+"_"+job_name+seq_no+".dmp"
+ dump_file_name = "exp_"+schema_name.replace("$","")+"_"+job_name+seq_no+"%U.dmp"
  log_file_name = "exp_"+schema_name.replace("$","")+"_"+job_name+seq_no+".log"
 
  #print("job id is ",job_id.getvalue())   
  
- cursor1.callproc('add_dump_file', [job_id,dump_file_name])
+ cursor1.callproc('add_dump_file', [job_id,dump_file_name,str(split_threshold)+"G"])
  #print("after add file")   
 
  cursor1.callproc('add_log_file', [job_id,log_file_name])
@@ -85,9 +85,9 @@ def print_table(Data,split_partition,username,servername,dbname,silent_mode,spli
  print ("Schema: ",bold_format+username.ljust(25," ")+end_format," Host:",bold_format+servername.ljust(20," ")+end_format," DB Name:",bold_format+dbname.ljust(25," ")+end_format)
  print ("Mode: ",bold_format+str("Silent" if silent_mode=="Y" else "Interactive").ljust(25," ")+end_format ," Split after(MB):",bold_format+str(split_threshold).ljust(10," ")+end_format," Split partitions:",bold_format+str(split_partition).ljust(10," ")+end_format)
  print ("-------------------------------------------------------------------------------------")
- print ("\033[32m","S.No Schema Name   Rows","\033[0m")
+ print ("\033[32m","S.No    Schema Name","\033[0m")
  for x in Data:
-     print ("\033[34m",x[0].rjust(4,' '),"  ",x[1].rjust(20,' '),"\033[0m")
+     print ("\033[34m",x[0].rjust(4,' '),"  ",x[1].ljust(30,' '),"\033[0m")
  print ("-------------------------------------------------------------------------------------")
 
 def get_oracle_list(connection,table_list):
@@ -142,7 +142,7 @@ def main():
    # Establish the database connection
    table_name = x[1]
 
-   exp_data(connection,table_name,"0","Y")
+   exp_data(connection,table_name,"0","Y",split_threshold)
  
  while str(val).lower()!="q"  and str(val).lower()!="*":
  
@@ -151,7 +151,7 @@ def main():
   # Establish the database connection
   table_name = Data[int(val)][1]
   file_name = table_name.lower()+".csv"
-  exp_data(connection,table_name,"0","Y")
+  exp_data(connection,table_name,"0","Y",split_threshold)
  
   val= input("Enter table number (q to quit): ")
  
