@@ -85,9 +85,10 @@ def print_table(Data,split_partition,username,servername,dbname,silent_mode,spli
  print ("Schema: ",bold_format+username.ljust(25," ")+end_format," Host:",bold_format+servername.ljust(20," ")+end_format," DB Name:",bold_format+dbname.ljust(25," ")+end_format)
  print ("Mode: ",bold_format+str("Silent" if silent_mode=="Y" else "Interactive").ljust(25," ")+end_format ," Split after(MB):",bold_format+str(split_threshold).ljust(10," ")+end_format," Split partitions:",bold_format+str(split_partition).ljust(10," ")+end_format)
  print ("-------------------------------------------------------------------------------------")
- print ("\033[32m","S.No    Schema Name","\033[0m")
+ print ("\033[32m",str("S.No").rjust(4,'*'),"|",str("Schema Name").ljust(30,' '),"|",str("Size(M)").ljust(7,'*'),"\033[0m")
+ print ("-------------------------------------------------------------------------------------")
  for x in Data:
-     print ("\033[34m",x[0].rjust(4,' '),"  ",x[1].ljust(30,' '),"\033[0m")
+     print ("\033[34m",x[0].rjust(4,' '),"|",x[1].ljust(30,' '),"|",str(x[2]).ljust(7,' '),"\033[0m")
  print ("-------------------------------------------------------------------------------------")
 
 def get_oracle_list(connection,table_list):
@@ -98,7 +99,7 @@ def get_oracle_list(connection,table_list):
  bindValues = table_list
  bindValues = [val.upper() for val in bindValues]
  bindNames = [":" + str(i + 1) for i in range(len(bindValues))]
- sql = "select rownum,username from dba_users " + \
+ sql = "select rownum,username, nvl((select ceil(SUM(BYTES)/1024/1024) from dba_extents where owner=a.username),0) siz from dba_users a " + \
  "where username in (%s)" % (",".join(bindNames))
 
  cursor.execute(sql, bindValues)
