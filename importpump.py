@@ -8,6 +8,7 @@ import os
 import json
 import time
 import subprocess
+import csv
 from datetime import datetime
 
 def read_config(config_file_name):
@@ -16,36 +17,18 @@ def read_config(config_file_name):
 
   return conf_details_dict
 
-def update_progress(f_name,progress):
-    barLength = 20 # Modify this to change the length of the progress bar
-    status = ""
-    if isinstance(progress, int):
-        progress = float(progress)
-    if not isinstance(progress, float):
-        progress = 0
-        status = "error: progress var must be float\r\n"
-    if progress < 0:
-        progress = 0
-        status = "Halt...\r\n"
-    if progress >= 1:
-        progress = 1
-        status = "Done...\r\n"
-    block = int(round(barLength*progress))
-    text = "\r"+f_name+": [{0}] {1}% {2}".format( "="*block + " "*(barLength-block), round(progress*100,0), status)
-    
-    sys.stdout.write(text)
-    sys.stdout.flush()
+def get_list_data():
+ with open("test_json.json",newline='') as f:
+  reader = csv.reader(f)
+  data = list(reader)
 
-def zip_file(file_name):
- gz_name = file_name+".gz"
+ #print(data)
+ for i in range(len(data)):
+  print(data[i][0]," ",data[i][1])
 
- with open(file_name, "rb") as f_in:
-    with gzip.open(gz_name, "wb") as f_out:
-        shutil.copyfileobj(f_in, f_out)
- os.remove(file_name)
+  return data
 
-
-def exp_data(connection,sname,seq_no,full_exp,split_threshold):
+def exp_data(connection,sname,dmp_file_name,seq_no,full_exp,split_threshold):
  job_name = datetime.now().strftime("%m%d%Y%H%M%S")
  schema_name = sname 
 
@@ -58,9 +41,11 @@ def exp_data(connection,sname,seq_no,full_exp,split_threshold):
  #print(" Job id is ",job_id)
  job_id = cursor1.var(int)
  cursor1.callproc('create_job', [job_name,job_id])
- dump_file_name = "exp_"+schema_name.replace("$","")+"_"+job_name+seq_no+"%U.dmp"
- log_file_name = "exp_"+schema_name.replace("$","")+"_"+job_name+seq_no+".log"
+ #dump_file_name = "exp_"+schema_name.replace("$","")+"_"+job_name+seq_no+"%U.dmp"
+ #log_file_name = "exp_"+schema_name.replace("$","")+"_"+job_name+seq_no+".log"
 
+ dump_file_name = dmp_file_name 
+ log_file_name = "exp_"+schema_name.replace("$","")+"_"+job_name+seq_no+".log"
  
  #print("job id is ",job_id.getvalue())   
  cursor1.callproc('add_dump_file', [job_id,dump_file_name,str(split_threshold)+"G"])
@@ -88,9 +73,12 @@ def print_table(Data,split_partition,username,servername,dbname,silent_mode,spli
  print ("-------------------------------------------------------------------------------------")
  print ("\033[32m",str("S.No").rjust(4,'*'),"|",str("Schema Name").ljust(30,' '),"|",str("Size(M)").ljust(7,'*'),"\033[0m")
  print ("-------------------------------------------------------------------------------------")
- for x in Data:
-     print ("\033[34m",x[0].rjust(4,' '),"|",x[1].ljust(30,' '),"|",str(x[2]).ljust(7,' '),"\033[0m")
+ y=1
+ for x in range(len(Data)):
+     print ("\033[34m",str(y).rjust(4,' '),"|",Data[x][0].ljust(30,' '),"|",str(Data[x][1]).ljust(7,' '),"\033[0m")
+     y = y+1
  print ("-------------------------------------------------------------------------------------")
+
 
 def get_oracle_list(connection,table_list):
  cursor = connection.cursor()
@@ -128,10 +116,11 @@ def main():
  
  connection = cx_Oracle.connect(username,password, servername+":"+str(port_no)+"/"+dbname)
 
- Data = get_oracle_list(connection,user_list) 
+# Data = get_oracle_list(connection,user_list) 
+ Data1 = get_list_data()
 
 
- print_table(Data,split_partition,username,servername,dbname,silent_mode,split_threshold)
+ print_table(Data1,split_partition,username,servername,dbname,silent_mode,split_threshold)
 
  if silent_mode=="N":
   val = input("Enter schema number (q to quit): ")
@@ -140,28 +129,24 @@ def main():
   time.sleep(2)
   val ="*"
  
- f1 = open('test_json.json','w')
- 
+ Data = np.array(Data1)
  #new_dic['import_conf']['user_list'] = {}
  if str(val) == "*":
   for x in Data:
    # Establish the database connection
-   table_name = x[1]
-
-   schema_name,dump_file_name = exp_data(connection,table_name,"0","Y",split_threshold)
+   schema_name = x[0]
+   dump_file_name = x[1]
+   exp_data(connection,schema_name,dump_file_name,"0","Y",split_threshold)
  
-   f1.write(schema_name+","+dump_file_name+"\n")
  
  while str(val).lower()!="q"  and str(val).lower()!="*":
  
   val = int(val)-1
   
   # Establish the database connection
-  table_name = Data[int(val)][1]
-  file_name = table_name.lower()+".csv"
-  schema_name,dump_file_name = exp_data(connection,table_name,"0","Y",split_threshold)
- 
-  f1.write(schema_name+","+dump_file_name+"\n")
+  schema_name = Data[int(val)][0]
+  dump_file_name = Data[int(val)][1]
+  exp_data(connection,schema_name,dump_file_name,"0","Y",split_threshold)
   val= input("Enter table number (q to quit): ")
  
  else:
