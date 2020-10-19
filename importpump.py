@@ -28,7 +28,7 @@ def get_list_data():
 
   return data
 
-def exp_data(connection,sname,dmp_file_name,seq_no,full_exp,split_threshold):
+def exp_data(connection,sname,dmp_file_name,seq_no,full_exp,split_threshold,directory_name):
  job_name = datetime.now().strftime("%m%d%Y%H%M%S")
  schema_name = sname 
 
@@ -40,21 +40,21 @@ def exp_data(connection,sname,dmp_file_name,seq_no,full_exp,split_threshold):
  # job_id = cursor1.callfunc("create_job",int)
  #print(" Job id is ",job_id)
  job_id = cursor1.var(int)
- cursor1.callproc('create_job', [job_name,job_id])
+ cursor1.callproc('create_import_job', [job_name,job_id])
  #dump_file_name = "exp_"+schema_name.replace("$","")+"_"+job_name+seq_no+"%U.dmp"
  #log_file_name = "exp_"+schema_name.replace("$","")+"_"+job_name+seq_no+".log"
 
  dump_file_name = dmp_file_name 
- log_file_name = "exp_"+schema_name.replace("$","")+"_"+job_name+seq_no+".log"
+ log_file_name = "imp_"+schema_name.replace("$","")+"_"+job_name+seq_no+".log"
  
- #print("job id is ",job_id.getvalue())   
- cursor1.callproc('add_dump_file', [job_id,dump_file_name,str(split_threshold)+"G"])
- #print("after add file")   
+ print("job id is ",job_id.getvalue())   
+ cursor1.callproc('add_dump_file', [job_id,dump_file_name,str(split_threshold)+"M",directory_name])
+ print("after add file-",dump_file_name,"-",str(split_threshold)+"M","-",directory_name)   
 
- cursor1.callproc('add_log_file', [job_id,log_file_name])
- #print("after log file")   
+ cursor1.callproc('add_log_file', [job_id,log_file_name,directory_name])
+ print("after log file-",log_file_name,"-",directory_name)   
  
- cursor1.callproc("DBMS_DATAPUMP.METADATA_FILTER",[job_id,"SCHEMA_EXPR","IN ('"+schema_name+"')"])
+ #cursor1.callproc("DBMS_DATAPUMP.METADATA_FILTER",[job_id,"SCHEMA_EXPR","IN ('"+schema_name+"')"])
  cursor1.callproc("DBMS_DATAPUMP.START_JOB",[job_id])
  print("Export job "+str(job_id.getvalue())+" started. Please check log file "+dump_file_name+" for more details and progress")
  j = 0
@@ -106,6 +106,7 @@ def main():
  split_threshold = conf_details_dict['export_details']['split_threshold']
  split_partition = conf_details_dict['export_details']['split_partitions']
  silent_mode = conf_details_dict['export_details']['silent_mode']
+ directory_name = conf_details_dict['export_details']['directory']
  
  
  username = conf_details_dict['username']
@@ -130,14 +131,13 @@ def main():
   val ="*"
  
  Data = np.array(Data1)
- #new_dic['import_conf']['user_list'] = {}
  if str(val) == "*":
   for x in Data:
    # Establish the database connection
    schema_name = x[0]
    dump_file_name = x[1]
-   exp_data(connection,schema_name,dump_file_name,"0","Y",split_threshold)
- 
+   print(schema_name," - ",dump_file_name)
+   exp_data(connection,schema_name,dump_file_name,"0","Y",split_threshold,directory_name)
  
  while str(val).lower()!="q"  and str(val).lower()!="*":
  
@@ -146,7 +146,7 @@ def main():
   # Establish the database connection
   schema_name = Data[int(val)][0]
   dump_file_name = Data[int(val)][1]
-  exp_data(connection,schema_name,dump_file_name,"0","Y",split_threshold)
+  exp_data(connection,schema_name,dump_file_name,"0","Y",split_threshold,directory_name)
   val= input("Enter table number (q to quit): ")
  
  else:

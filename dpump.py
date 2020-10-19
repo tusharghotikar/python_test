@@ -45,7 +45,7 @@ def zip_file(file_name):
  os.remove(file_name)
 
 
-def exp_data(connection,sname,seq_no,full_exp,split_threshold):
+def exp_data(connection,sname,seq_no,full_exp,split_threshold,directory_name):
  job_name = datetime.now().strftime("%m%d%Y%H%M%S")
  schema_name = sname 
 
@@ -63,10 +63,10 @@ def exp_data(connection,sname,seq_no,full_exp,split_threshold):
 
  
  #print("job id is ",job_id.getvalue())   
- cursor1.callproc('add_dump_file', [job_id,dump_file_name,str(split_threshold)+"G"])
+ cursor1.callproc('add_dump_file', [job_id,dump_file_name,str(split_threshold)+"M",directory_name])
  #print("after add file")   
 
- cursor1.callproc('add_log_file', [job_id,log_file_name])
+ cursor1.callproc('add_log_file', [job_id,log_file_name,directory_name])
  #print("after log file")   
  
  cursor1.callproc("DBMS_DATAPUMP.METADATA_FILTER",[job_id,"SCHEMA_EXPR","IN ('"+schema_name+"')"])
@@ -118,7 +118,7 @@ def main():
  split_threshold = conf_details_dict['export_details']['split_threshold']
  split_partition = conf_details_dict['export_details']['split_partitions']
  silent_mode = conf_details_dict['export_details']['silent_mode']
- 
+ directory_name = conf_details_dict['export_details']['directory']
  
  username = conf_details_dict['username']
  password = conf_details_dict['password']
@@ -148,7 +148,7 @@ def main():
    # Establish the database connection
    table_name = x[1]
 
-   schema_name,dump_file_name = exp_data(connection,table_name,"0","Y",split_threshold)
+   schema_name,dump_file_name = exp_data(connection,table_name,"0","Y",split_threshold,directory_name)
  
    f1.write(schema_name+","+dump_file_name+"\n")
  
@@ -159,7 +159,7 @@ def main():
   # Establish the database connection
   table_name = Data[int(val)][1]
   file_name = table_name.lower()+".csv"
-  schema_name,dump_file_name = exp_data(connection,table_name,"0","Y",split_threshold)
+  schema_name,dump_file_name = exp_data(connection,table_name,"0","Y",split_threshold,directory_name)
  
   f1.write(schema_name+","+dump_file_name+"\n")
   val= input("Enter table number (q to quit): ")
