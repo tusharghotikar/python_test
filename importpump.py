@@ -55,6 +55,10 @@ def exp_data(connection,sname,dmp_file_name,seq_no,full_exp,split_threshold,dire
  #print("after log file-",log_file_name,"-",directory_name)   
  
  #cursor1.callproc("DBMS_DATAPUMP.METADATA_FILTER",[job_id,"SCHEMA_EXPR","IN ('"+schema_name+"')"])
+
+ print("job id is ",job_id," schema is ",schema_name," new name ", schema_name+"_1")   
+ cursor1.callproc("DBMS_DATAPUMP.METADATA_REMAP",[job_id,"REMAP_SCHEMA",schema_name,schema_name+"_1"])
+
  cursor1.callproc("DBMS_DATAPUMP.START_JOB",[job_id])
  print("Export job "+str(job_id.getvalue())+" started. Please check log file "+log_file_name+" for more details and progress")
  j = 0
