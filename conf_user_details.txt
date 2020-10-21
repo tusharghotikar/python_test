@@ -5,10 +5,11 @@
    "sid": "orcl",
    "port": 1521,
    "export_details": {
-      "silent_mode": "Y",
+      "silent_mode": "N",
       "directory": "TEST_ABC",
       "split_threshold": 5,
       "split_partitions": 4,
+      "show_all":"Y",
       "user_list": [
          "HR","SH","SCOTT","TEST_IMPORT","SH"
       ]

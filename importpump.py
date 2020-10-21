@@ -47,16 +47,16 @@ def exp_data(connection,sname,dmp_file_name,seq_no,full_exp,split_threshold,dire
  dump_file_name = dmp_file_name 
  log_file_name = "imp_"+schema_name.replace("$","")+"_"+job_name+seq_no+".log"
  
- print("job id is ",job_id.getvalue())   
+ #print("job id is ",job_id.getvalue())   
  cursor1.callproc('add_dump_file', [job_id,dump_file_name,str(split_threshold)+"M",directory_name])
- print("after add file-",dump_file_name,"-",str(split_threshold)+"M","-",directory_name)   
+ #print("after add file-",dump_file_name,"-",str(split_threshold)+"M","-",directory_name)   
 
  cursor1.callproc('add_log_file', [job_id,log_file_name,directory_name])
- print("after log file-",log_file_name,"-",directory_name)   
+ #print("after log file-",log_file_name,"-",directory_name)   
  
  #cursor1.callproc("DBMS_DATAPUMP.METADATA_FILTER",[job_id,"SCHEMA_EXPR","IN ('"+schema_name+"')"])
  cursor1.callproc("DBMS_DATAPUMP.START_JOB",[job_id])
- print("Export job "+str(job_id.getvalue())+" started. Please check log file "+dump_file_name+" for more details and progress")
+ print("Export job "+str(job_id.getvalue())+" started. Please check log file "+log_file_name+" for more details and progress")
  j = 0
  
  cursor1.close()
@@ -126,7 +126,7 @@ def main():
  if silent_mode=="N":
   val = input("Enter schema number (q to quit): ")
  else:
-  print("Performing silent export of above mentioned tables")
+  print("Performing silent export of above mentioned Users")
   time.sleep(2)
   val ="*"
  

@@ -92,18 +92,21 @@ def print_table(Data,split_partition,username,servername,dbname,silent_mode,spli
      print ("\033[34m",x[0].rjust(4,' '),"|",x[1].ljust(30,' '),"|",str(x[2]).ljust(7,' '),"\033[0m")
  print ("-------------------------------------------------------------------------------------")
 
-def get_oracle_list(connection,table_list):
+def get_oracle_list(connection,table_list,show_all_users):
  cursor = connection.cursor()
 
  #print (table_list)
+ if show_all_users == "N":
+  bindValues = table_list
+  bindValues = [val.upper() for val in bindValues]
+  bindNames = [":" + str(i + 1) for i in range(len(bindValues))]
+  sql = "select rownum,username, nvl((select ceil(SUM(BYTES)/1024/1024) from dba_extents where owner=a.username),0) siz from dba_users a " + \
+  "where username in (%s)" % (",".join(bindNames))
 
- bindValues = table_list
- bindValues = [val.upper() for val in bindValues]
- bindNames = [":" + str(i + 1) for i in range(len(bindValues))]
- sql = "select rownum,username, nvl((select ceil(SUM(BYTES)/1024/1024) from dba_extents where owner=a.username),0) siz from dba_users a " + \
- "where username in (%s)" % (",".join(bindNames))
-
- cursor.execute(sql, bindValues)
+  cursor.execute(sql, bindValues)
+ else:
+  sql = "select rownum,username, nvl((select ceil(SUM(BYTES)/1024/1024) from dba_extents where owner=a.username),0) siz from dba_users a "
+  cursor.execute(sql)
 
  Data = np.array(list(cursor.fetchall()))
  cursor.close()
@@ -119,6 +122,7 @@ def main():
  split_partition = conf_details_dict['export_details']['split_partitions']
  silent_mode = conf_details_dict['export_details']['silent_mode']
  directory_name = conf_details_dict['export_details']['directory']
+ show_all_users = conf_details_dict['export_details']['show_all']
  
  username = conf_details_dict['username']
  password = conf_details_dict['password']
@@ -128,7 +132,7 @@ def main():
  
  connection = cx_Oracle.connect(username,password, servername+":"+str(port_no)+"/"+dbname)
 
- Data = get_oracle_list(connection,user_list) 
+ Data = get_oracle_list(connection,user_list,show_all_users) 
 
 
  print_table(Data,split_partition,username,servername,dbname,silent_mode,split_threshold)
