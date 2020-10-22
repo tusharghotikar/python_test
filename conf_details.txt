@@ -1,6 +1,6 @@
 {
-   "username": "Admin",
-   "password": "Admin123",
+   "username": "hr",
+   "password": "hr",
    "host": "localhost",
    "sid": "orcl",
    "port": 1521,

@@ -165,8 +165,8 @@ def main():
  servername = conf_details_dict['host']
  port_no = conf_details_dict['port']
  
- #connection = cx_Oracle.connect(username,password, servername+":"+str(port_no)+"/"+dbname)
- connection = cx_Oracle.connect(username,password,"db202009221226_low",encoding="UTF-8")
+ connection = cx_Oracle.connect(username,password, servername+":"+str(port_no)+"/"+dbname)
+ #connection = cx_Oracle.connect(username,password,"db202009221226_low",encoding="UTF-8")
  connection.outputtypehandler = OutputTypeHandler
 
  Data = get_oracle_list(connection,table_list) 
